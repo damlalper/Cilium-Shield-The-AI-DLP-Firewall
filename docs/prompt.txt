@@ -1,0 +1,89 @@
+Role: You are a World-Class Cloud Native Architect and Systems Engineer specializing in eBPF, Cilium, Kubernetes, WebAssembly (Wasm), and Golang.
+
+Context: I am participating in the "eBPF Summit: Hackathon Edition 2025". My goal is to win the "Cilium Technologies" track and create a high-tech B2B SaaS MVP that solves "Shadow AI" data leakage.
+
+Project Name: Cilium-Shield (The AI-DLP Firewall)
+
+Project Goal: Build a Kubernetes-native Data Leakage Prevention (DLP) system using Cilium Service Mesh. The system must intercept outbound HTTP traffic from pods (specifically traffic targeting LLM APIs like OpenAI/Anthropic), inspect the JSON payload for sensitive data (PII, Credit Cards, API Keys) using a WebAssembly (Wasm) filter running on Envoy (via Cilium), and mask/redact the data in real-time before it leaves the cluster.
+
+Tech Stack (Strict Requirement):
+
+Data Plane: Cilium Service Mesh + Envoy Proxy.
+
+Filter Logic: WebAssembly (Wasm) written in TinyGo or Rust (running inside Envoy) for high-performance payload inspection.
+
+Control Plane: Golang. A Kubernetes Operator or Controller that manages the DLP policies.
+
+Frontend: Next.js (React) + Tailwind CSS for a modern "Enterprise Grade" dashboard showing blocked/redacted requests.
+
+Database: Redis (for fast caching) or simple in-memory for the hackathon demo.
+
+Tasks & Deliverables:
+
+Phase 1: The Wasm Filter (The Core)
+
+Write a WebAssembly module (preferably in TinyGo for proxy-wasm-go-sdk) that:
+
+Parses HTTP Request Bodies (specifically targeting JSON payloads).
+
+Uses Regex to detect Credit Card numbers (Luhn algorithm if possible) and generic "Secret Key" patterns (e.g., sk-proj-...).
+
+Replaces the sensitive data with [REDACTED] in the payload.
+
+Adds a custom header x-cilium-shield-status: redacted to the request.
+
+Phase 2: Cilium Configuration
+
+Provide the CiliumEnvoyConfig (CRD) YAML manifest required to inject this Wasm filter into the Cilium Service Mesh for a specific namespace.
+
+Phase 3: The Go Control Plane (Backend)
+
+Create a simple Go backend that acts as an observability receiver. The Wasm filter should asynchronously log the "redaction events" (timestamp, source pod, destination API, redacted type) to this backend.
+
+Phase 4: The Dashboard (Frontend)
+
+Generate a Next.js page component that displays a real-time table of "Prevented Leaks". It should look impressive and professional (Dark mode, cyber-security aesthetic).
+
+Phase 5: Documentation (The Winning Factor)
+
+Draft a README.md structure that highlights:
+
+"Zero-Trust AI Adoption"
+
+"eBPF & Wasm Powered Performance"
+
+Architecture Diagram description.
+
+Request: Please start by generating the Project Directory Structure and then provide the code for Phase 1 (The Wasm Filter in TinyGo) and the Phase 2 (Cilium CRD manifest). I need the code to be production-ready, well-commented, and impressive.
+
+
+Repo Yapısı: Dosyaları GitHub reponda şu şekilde organize et:
+
+Plaintext
+
+/cilium-shield
+├── README.md          <-- Ana vitrin
+├── ARCHITECTURE.md    <-- Teknik detay
+├── PRD.md             <-- İş vizyonu
+├── /docs
+│   └── images         <-- Diyagram resimleri buraya
+├── /wasm-filter       <-- Go kodu (Faz 1)
+├── /k8s               <-- YAML dosyaları (Faz 2)
+└── /ui                <-- Next.js kodu (Faz 4)
+Mermaid Diyagramları: ARCHITECTURE.md içindeki mermaid bloğu, GitHub tarafından otomatik olarak güzel bir şemaya dönüştürülür. Ekstra bir resim yüklemene gerek kalmaz, bu da çok "developer-native" durur.
+
+Öneri: README.md dosyasındaki "Demo Video" kısmına, videonu YouTube'a yükledikten sonra oradan alacağın GIF'i veya linki koymayı sakın unutma.
+
+
+promptu verd,ktn sonra:
+İlk Adım: Yukarıdaki promptu aynen yapıştır. Sana proje yapısını, Wasm kodunu (TinyGo ile) ve Cilium YAML dosyasını verecek.
+
+Kontrol Et: Kodun içinde proxy-wasm-go-sdk kullanıyor mu? Regex mantığı doğru mu?
+
+İkinci Adım (Devam Promptu): İlk cevap geldikten sonra şunu yaz:
+
+"Great. Now, let's build Phase 3 and Phase 4. Create the Golang backend to receive logs from the Wasm filter and the Next.js Dashboard component to visualize these leaks. Make the UI look like a cybersecurity command center."
+
+Üçüncü Adım (Sunum): Kodları tamamladıktan sonra README ve Demo senaryosu için şunu yaz:
+
+"Now, write the README.md tailored for the Hackathon judges (Isovalent & Cisco). Emphasize the business value (B2B) and the technical complexity (Wasm + Cilium). Also, write a short script for the 3-minute demo video."
