@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Shield",
+  "name": "Cilium-Shield CISO Dashboard",
+  "description": "AI-DLP Firewall Command Center - Real-time monitoring of sensitive data redaction events",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +11,28 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0ea5e9",
+  "background_color": "#111827",
+  "orientation": "any",
+  "scope": "/",
+  "categories": ["security", "monitoring", "business"],
+  "screenshots": [
+    {
+      "src": "screenshot.png",
+      "type": "image/png",
+      "sizes": "1280x720"
+    }
+  ]
 }

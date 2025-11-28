@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
+import OfflineIndicator from './OfflineIndicator';
 
 // Define the Event type to match the backend
 const RedactionDashboard = () => {
@@ -51,6 +52,7 @@ const RedactionDashboard = () => {
 
   return (
     <div className="bg-gray-900 text-gray-200 min-h-screen font-sans">
+      <OfflineIndicator />
       <div className="container mx-auto p-4 md:p-8">
         <header className="flex justify-between items-center mb-8 border-b border-cyan-900 pb-4">
           <div>
