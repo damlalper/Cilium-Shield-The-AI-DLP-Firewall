@@ -1,0 +1,43 @@
+
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideEnvoyConfig
+metadata:
+  name: cilium-shield-cluster-wide-config
+spec:
+  # This targets all services in the cluster.
+  # For a more targeted approach, you could use a specific service name and namespace.
+  # For this MVP, we are targeting all outbound traffic to api.openai.com.
+  services:
+    - name: "api.openai.com"
+      namespace: "" # Empty namespace means all namespaces
+  resources:
+    - type: envoy.config.listener.v3.Listener
+      name: "my-listener"
+      resource:
+        filterChains:
+          - filters:
+              - name: envoy.filters.network.http_connection_manager
+                typedConfig:
+                  '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                  httpFilters:
+                    - name: envoy.filters.http.wasm
+                      typedConfig:
+                        '@type': type.googleapis.com/udpa.type.v1.TypedStruct
+                        typeUrl: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+                        value:
+                          config:
+                            name: "cilium-shield-filter"
+                            rootId: "my_root_id" # This must match the root ID in the Wasm module
+                            vmConfig:
+                              vmId: "cilium-shield-vm"
+                              runtime: "envoy.wasm.runtime.v8" # Using the V8 runtime for better performance
+                              code:
+                                remote:
+                                  httpUri:
+                                    # This is the address of the Wasm module in the container registry.
+                                    # In a real-world scenario, this would be a real registry address.
+                                    uri: "http://registry.example.com/cilium-shield-wasm:v1"
+                                    sha256: "..." # Replace with the actual SHA256 hash of the Wasm module
+                    - name: envoy.router
+                      typedConfig:
+                        '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router

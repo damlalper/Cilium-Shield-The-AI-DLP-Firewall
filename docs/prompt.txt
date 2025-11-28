@@ -56,6 +56,25 @@ Architecture Diagram description.
 
 Request: Please start by generating the Project Directory Structure and then provide the code for Phase 1 (The Wasm Filter in TinyGo) and the Phase 2 (Cilium CRD manifest). I need the code to be production-ready, well-commented, and impressive.
 
+**CRITICAL INSTRUCTION: OPTIMIZE FOR JUDGING CRITERIA**
+You must engineer every part of this solution to score maximum points based on the official Hackathon Judging Criteria. Follow these strict guidelines while generating the output:
+
+**1. Relevance to eBPF & Cilium (Make it Native):**
+* Do not just "use" Cilium; leverage its specific custom resources. The solution **must** rely on `CiliumEnvoyConfig` (or `CiliumClusterwideEnvoyConfig`) to inject the Wasm filter.
+* Explicitly mention in comments how we are extending the Cilium ecosystem (Layer 7 visibility) rather than just bypassing it.
+
+**2. Technical Depth (Show Engineering Excellence):**
+* **Memory Safety:** In the TinyGo Wasm code, ensure we handle memory correctly (no leaks when parsing large JSON bodies).
+* **Concurrency:** In the Go Control Plane, use Goroutines efficiently to handle high-volume log ingestion from the filter without blocking.
+* **Error Handling:** No "silent failures". If the Wasm filter crashes, ensuring the traffic fails open or closed (based on config) demonstrates production-grade thinking.
+
+**3. Creativity (The "Wow" Factor):**
+* Emphasize the novelty: We are applying eBPF/Cilium logic to a brand new problem domain (**GenAI Data Security**). This is not just another load balancer; it is a specialized AI firewall.
+* In the code comments, highlight *why* doing this in Wasm/Envoy is smarter than a traditional sidecar (e.g., "Zero-Copy networking").
+
+**4. Clarity & Presentation (Judge-Friendly):**
+* **Self-Documenting Code:** Variable names must be descriptive.
+* **Architecture Clarity:** When generating the README structure, ensure the "How it Works" section is simple enough for a non-coder to grasp but deep enough for a kernel engineer to appreciate.
 
 Repo Yapısı: Dosyaları GitHub reponda şu şekilde organize et:
 

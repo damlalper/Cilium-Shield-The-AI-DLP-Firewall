@@ -1,0 +1,40 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilium-shield-observer
+  # We recommend deploying the observer in a system namespace like kube-system
+  # to separate it from application workloads.
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cilium-shield-observer
+  template:
+    metadata:
+      labels:
+        app: cilium-shield-observer
+    spec:
+      containers:
+        - name: observer
+          # IMPORTANT: Replace this with the actual address of your container registry
+          image: registry.example.com/cilium-shield-observer:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cilium-shield-observer
+  namespace: kube-system
+spec:
+  selector:
+    app: cilium-shield-observer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
