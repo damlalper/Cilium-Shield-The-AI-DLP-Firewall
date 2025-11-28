@@ -1,0 +1,15 @@
+{
+  "name": "cilium-shield-backend",
+  "version": "1.0.0",
+  "description": "Backend for the Cilium-Shield project.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5"
+  }
+}

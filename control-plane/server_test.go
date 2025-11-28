@@ -83,33 +83,87 @@ func TestEventHandler(t *testing.T) {
 }
 
 func TestListEventsHandler(t *testing.T) {
-	// Reset the store
-	store = NewEventStore()
+	t.Run("with events in store", func(t *testing.T) {
+		// Reset the store
+		store = NewEventStore()
+		store.Add(Event{SourcePodIP: "10.0.0.1"})
+		store.Add(Event{SourcePodIP: "10.0.0.2"})
+
+		req, err := http.NewRequest("GET", "/api/v1/events/list", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(listEventsHandler)
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusOK)
+		}
+
+		var events []Event
+		err = json.Unmarshal(rr.Body.Bytes(), &events)
+		if err != nil {
+			t.Fatalf("could not parse response body: %s", err)
+		}
+
+		if len(events) != 2 {
+			t.Errorf("expected 2 events, got %d", len(events))
+		}
+	})
+
+	t.Run("with empty store", func(t *testing.T) {
+		// Reset the store
+		store = NewEventStore()
+
+		req, err := http.NewRequest("GET", "/api/v1/events/list", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(listEventsHandler)
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusOK)
+		}
+
+		var events []Event
+		err = json.Unmarshal(rr.Body.Bytes(), &events)
+		if err != nil {
+			t.Fatalf("could not parse response body: %s", err)
+		}
+
+		if len(events) != 0 {
+			t.Errorf("expected 0 events, got %d", len(events))
+		}
+	})
+}
+
+func TestEventStore_ListReturnsCopy(t *testing.T) {
+	store := NewEventStore()
 	store.Add(Event{SourcePodIP: "10.0.0.1"})
-	store.Add(Event{SourcePodIP: "10.0.0.2"})
 
-	req, err := http.NewRequest("GET", "/api/v1/events/list", nil)
-	if err != nil {
-		t.Fatal(err)
+	events1 := store.List()
+	if len(events1) != 1 {
+		t.Fatalf("expected 1 event, got %d", len(events1))
 	}
 
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(listEventsHandler)
-	handler.ServeHTTP(rr, req)
+	// Modify the returned slice
+	events1[0].SourcePodIP = "modified"
 
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
+	// Get the list again and check if it was modified
+	events2 := store.List()
+	if len(events2) != 1 {
+		t.Fatalf("expected 1 event, got %d", len(events2))
 	}
 
-	var events []Event
-	err = json.Unmarshal(rr.Body.Bytes(), &events)
-	if err != nil {
-		t.Fatalf("could not parse response body: %s", err)
-	}
-
-	if len(events) != 2 {
-		t.Errorf("expected 2 events, got %d", len(events))
+	if events2[0].SourcePodIP == "modified" {
+		t.Errorf("List method returned a reference to the internal slice, modifications should not be reflected")
 	}
 }
 

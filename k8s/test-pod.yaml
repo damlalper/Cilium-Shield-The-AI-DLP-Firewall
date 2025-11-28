@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+  namespace: default
+  labels:
+    app: test-client
+spec:
+  containers:
+    - name: curl
+      image: curlimages/curl:latest
+      command: ["sleep", "infinity"]
+---
+# Example ConfigMap with test data
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-data
+  namespace: default
+data:
+  sensitive-data.json: |
+    {
+      "prompt": "Please analyze this customer data",
+      "customer": {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "credit_card": "4532015112830366",
+        "api_key": "sk-proj-1234567890abcdefghijklmnopqrstuvwxyz"
+      }
+    }
+  clean-data.json: |
+    {
+      "prompt": "What is the capital of France?",
+      "context": "General knowledge question"
+    }

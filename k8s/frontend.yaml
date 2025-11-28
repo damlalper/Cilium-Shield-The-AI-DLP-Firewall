@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilium-shield-frontend
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cilium-shield-frontend
+  template:
+    metadata:
+      labels:
+        app: cilium-shield-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: node:18-alpine
+          workingDir: /app
+          command: ["npm", "start"]
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_API_URL
+              value: "http://cilium-shield-backend"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+      volumes:
+        - name: app-code
+          configMap:
+            name: frontend-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cilium-shield-frontend
+  namespace: default
+spec:
+  selector:
+    app: cilium-shield-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer

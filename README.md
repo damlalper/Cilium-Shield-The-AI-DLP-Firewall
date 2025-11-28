@@ -51,6 +51,37 @@ graph LR
 4.  **Audit Logging:** A `X-Cilium-Shield-Status: REDACTED` header is added to the request, and a log event is sent asynchronously to our Go-based `Shield Observer` for real-time visibility.
 5.  **CISO Dashboard:** A Next.js-based dashboard provides a "CISO Command Center" view of all redaction events, showing which pods are attempting to leak data and to where.
 
+## 💻 Development Commands
+
+```bash
+# Install all dependencies
+make install
+
+# Start local development (backend + frontend)
+make dev
+
+# Run tests
+make test
+
+# Build Wasm filter
+make build-wasm
+
+# Build control plane
+make build-control-plane
+
+# Build all Docker images
+make docker-all
+
+# Deploy to Kubernetes
+make k8s-deploy
+
+# Run demo
+make demo
+
+# Clean build artifacts
+make clean
+```
+
 ## 🏆 Why Cilium-Shield Wins: Hackathon Judging Criteria
 
 ### 1. Relevance to eBPF & Cilium (Native Extension)
@@ -74,6 +105,80 @@ graph LR
 
 *[Link to your 3-minute demo video or GIF will go here after you record it]*
 
+## 🚀 Quick Start
+
+### Local Development (2 minutes)
+
+```bash
+# Install dependencies
+make install
+
+# Start development environment
+make dev
+```
+
+This starts:
+- Backend API: http://localhost:3001
+- Dashboard: http://localhost:3000
+
+Test it:
+```bash
+make test
+```
+
+### Full Kubernetes Deployment
+
+See [QUICKSTART.md](QUICKSTART.md) for detailed instructions.
+
+## 📁 Project Structure
+
+```
+Cilium-Shield/
+├── wasm-filter/          # TinyGo Wasm L7 filter
+│   ├── main.go           # Wasm filter logic (Luhn algorithm, regex)
+│   ├── main_test.go      # Unit tests
+│   └── Dockerfile        # Multi-stage build for Wasm
+├── control-plane/        # Go Observer backend
+│   ├── server.go         # Event ingestion API
+│   ├── server_test.go    # Tests
+│   └── Dockerfile        # Go binary container
+├── backend/              # Node.js Express API
+│   ├── index.js          # REST API for dashboard
+│   └── package.json
+├── frontend/             # React Dashboard
+│   ├── src/
+│   │   └── components/
+│   │       └── RedactionDashboard.jsx
+│   └── package.json
+├── ui/                   # UI component reference
+│   └── components/
+│       └── RedactionDashboard.jsx
+├── k8s/                  # Kubernetes manifests
+│   ├── cilium-envoy-config.yaml
+│   ├── control-plane.yaml
+│   ├── backend.yaml
+│   ├── frontend.yaml
+│   └── test-pod.yaml
+├── scripts/              # Build and test scripts
+│   ├── build-wasm.sh
+│   ├── build-control-plane.sh
+│   ├── test-redaction.sh
+│   └── start-dev.sh
+├── docs/                 # Documentation
+│   ├── ARCHITECTURE.md   # Technical deep dive
+│   ├── PRD.md            # Product requirements
+│   ├── TESTING.md        # Testing guide
+│   ├── HATA_GIDERME.md   # Troubleshooting
+│   └── demo-script.md    # Video demo script
+├── Makefile              # Convenience commands
+├── QUICKSTART.md         # Quick start guide
+└── README.md             # This file
+```
+
 ## 🛠️ Getting Started
 
-Please see [TESTING.md](TESTING.md) for detailed instructions on how to build, deploy, and test the Cilium-Shield MVP in your own Kubernetes environment.
+**Quick Start:** See [QUICKSTART.md](QUICKSTART.md) for a 10-minute setup guide.
+
+**Detailed Testing:** See [TESTING.md](docs/TESTING.md) for comprehensive build, deploy, and test instructions.
+
+**Architecture:** See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical deep dive.

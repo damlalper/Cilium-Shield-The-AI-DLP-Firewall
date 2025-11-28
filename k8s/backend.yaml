@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilium-shield-backend
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cilium-shield-backend
+  template:
+    metadata:
+      labels:
+        app: cilium-shield-backend
+    spec:
+      containers:
+        - name: backend
+          image: node:18-alpine
+          workingDir: /app
+          command: ["npm", "start"]
+          ports:
+            - containerPort: 3001
+          env:
+            - name: PORT
+              value: "3001"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+      volumes:
+        - name: app-code
+          configMap:
+            name: backend-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cilium-shield-backend
+  namespace: default
+spec:
+  selector:
+    app: cilium-shield-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+  type: ClusterIP
